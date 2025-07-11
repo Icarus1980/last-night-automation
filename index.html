@@ -2,9 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Last Night Automation - Futuristic Flock</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet" />
+  <!-- Audiowide font for futuristic style -->
+  <link href="https://fonts.googleapis.com/css2?family=Audiowide&display=swap" rel="stylesheet" />
   <style>
     html, body {
       margin: 0; padding: 0; overflow: hidden;
@@ -19,7 +20,7 @@
       bottom: 20px;
       width: 100%;
       text-align: center;
-      font-family: 'Orbitron', sans-serif;
+      font-family: 'Audiowide', cursive;
       font-size: 1rem;
       color: #0077bb;
       text-shadow: 0 0 10px #004466;
@@ -61,7 +62,7 @@
       offCtx.clearRect(0, 0, width, height);
 
       offCtx.fillStyle = '#fff';
-      offCtx.font = 'bold 90px Orbitron';
+      offCtx.font = 'bold 90px Audiowide';
       offCtx.textAlign = 'center';
       offCtx.textBaseline = 'middle';
 
@@ -197,7 +198,7 @@
 
       ctx.clearRect(0, 0, width, height);
 
-      // State timing control (all times in frames, approx 60fps)
+      // State timing control (approx 60fps)
       if (frame === 180) {       // after 3 sec
         state = 'form';
         particles.forEach(p => p.state = 'form');
