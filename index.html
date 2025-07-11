@@ -1,53 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Last Night Automation</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet">
   <style>
-    body {
+    body, html {
       margin: 0;
       padding: 0;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Orbitron', sans-serif;
-      background-color: #000000;
-      background-image:
-        radial-gradient(circle, rgba(0, 255, 255, 0.4) 2px, transparent 1px);
-      background-size: 30px 30px;
-      animation: moveDots 60s linear infinite;
-      color: #00f7ff;
       overflow: hidden;
+      height: 100%;
+      background: black;
+      font-family: 'Orbitron', sans-serif;
+      color: #00f7ff;
     }
 
-    @keyframes moveDots {
-      0% {
-        background-position: 0 0;
-      }
-      100% {
-        background-position: 1000px 1000px;
-      }
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: block;
+      z-index: 0;
     }
 
     h1 {
+      position: relative;
+      z-index: 1;
+      text-align: center;
       font-size: 3rem;
       text-shadow: 0 0 8px #00f7ff, 0 0 16px #00f7ff;
-      margin-bottom: 20px;
+      top: 20vh;
       animation: pulse 3s infinite;
     }
 
     footer {
       position: absolute;
       bottom: 20px;
-      font-size: 1em;
+      width: 100%;
       text-align: center;
-      color: #00f7ff;
-      opacity: 0.8;
+      z-index: 1;
+      font-size: 1rem;
       text-shadow: 0 0 5px #00f7ff;
+      opacity: 0.8;
     }
 
     @keyframes pulse {
@@ -58,7 +53,57 @@
   </style>
 </head>
 <body>
-  <h1>Last Night Automation</h1>
-  <footer>Initiating precision... Standby for command.</footer>
+
+<canvas id="dots"></canvas>
+<h1>Last Night Automation</h1>
+<footer>Initiating precision... Standby for command.</footer>
+
+<script>
+  const canvas = document.getElementById('dots');
+  const ctx = canvas.getContext('2d');
+  let width, height;
+
+  function resizeCanvas() {
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+  }
+
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+
+  const DOTS = [];
+  const ROWS = 80;
+  const COLS = 80;
+  const spacing = 20;
+
+  for (let y = 0; y < ROWS; y++) {
+    for (let x = 0; x < COLS; x++) {
+      DOTS.push({
+        x0: x * spacing,
+        y0: y * spacing,
+        offset: Math.random() * 1000
+      });
+    }
+  }
+
+  function animate(time) {
+    ctx.clearRect(0, 0, width, height);
+    ctx.fillStyle = '#00f7ff';
+    for (let dot of DOTS) {
+      const dx = Math.sin((time + dot.offset) * 0.002) * 5;
+      const dy = Math.cos((time + dot.offset) * 0.002) * 5;
+      const x = dot.x0 + dx - (COLS * spacing) / 2 + width / 2;
+      const y = dot.y0 + dy - (ROWS * spacing) / 2 + height / 2;
+
+      ctx.beginPath();
+      ctx.arc(x, y, 1.2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    requestAnimationFrame(animate);
+  }
+
+  requestAnimationFrame(animate);
+</script>
+
 </body>
 </html>
