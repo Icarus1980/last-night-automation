@@ -23,16 +23,6 @@
       z-index: 0;
     }
 
-    h1 {
-      position: relative;
-      z-index: 1;
-      text-align: center;
-      font-size: 3rem;
-      text-shadow: 0 0 8px #00f7ff, 0 0 16px #00f7ff;
-      top: 20vh;
-      animation: pulse 3s infinite;
-    }
-
     footer {
       position: absolute;
       bottom: 20px;
@@ -43,17 +33,10 @@
       text-shadow: 0 0 5px #00f7ff;
       opacity: 0.8;
     }
-
-    @keyframes pulse {
-      0% { transform: scale(1); opacity: 0.9; }
-      50% { transform: scale(1.03); opacity: 1; }
-      100% { transform: scale(1); opacity: 0.9; }
-    }
   </style>
 </head>
 <body>
   <canvas id="flock"></canvas>
-  <h1>Last Night Automation</h1>
   <footer>Initiating precision... Standby for command.</footer>
 
   <script>
@@ -80,7 +63,6 @@
         this.velocity.x += this.acceleration.x;
         this.velocity.y += this.acceleration.y;
 
-        // Limit speed
         const speed = Math.sqrt(this.velocity.x ** 2 + this.velocity.y ** 2);
         if (speed > this.maxSpeed) {
           this.velocity.x = (this.velocity.x / speed) * this.maxSpeed;
@@ -93,7 +75,7 @@
         this.acceleration.x = 0;
         this.acceleration.y = 0;
 
-        // Wrap around edges
+        // Wrap around
         if (this.position.x > width) this.position.x = 0;
         if (this.position.x < 0) this.position.x = width;
         if (this.position.y > height) this.position.y = 0;
@@ -118,15 +100,12 @@
             this.position.y - other.position.y
           );
           if (other !== this && d < perceptionRadius) {
-            // Alignment
             alignment.x += other.velocity.x;
             alignment.y += other.velocity.y;
 
-            // Cohesion
             cohesion.x += other.position.x;
             cohesion.y += other.position.y;
 
-            // Separation
             let diffX = this.position.x - other.position.x;
             let diffY = this.position.y - other.position.y;
             if (d > 0) {
@@ -139,19 +118,16 @@
         }
 
         if (total > 0) {
-          // Alignment
           alignment.x /= total;
           alignment.y /= total;
           alignment = steer(this.velocity, alignment, this.maxSpeed, this.maxForce);
 
-          // Cohesion
           cohesion.x /= total;
           cohesion.y /= total;
           cohesion.x -= this.position.x;
           cohesion.y -= this.position.y;
           cohesion = steer(this.velocity, cohesion, this.maxSpeed, this.maxForce);
 
-          // Separation
           separation.x /= total;
           separation.y /= total;
           separation = steer(this.velocity, separation, this.maxSpeed, this.maxForce);
@@ -164,9 +140,9 @@
 
       draw() {
         ctx.beginPath();
-        ctx.arc(this.position.x, this.position.y, 1.5, 0, Math.PI * 2);
+        ctx.arc(this.position.x, this.position.y, 1.2, 0, Math.PI * 2);
         ctx.fillStyle = "#00f7ff";
-        ctx.shadowBlur = 8;
+        ctx.shadowBlur = 10;
         ctx.shadowColor = "#00f7ff";
         ctx.fill();
       }
@@ -192,7 +168,7 @@
     }
 
     const boids = [];
-    for (let i = 0; i < 150; i++) {
+    for (let i = 0; i < 400; i++) {
       boids.push(new Boid());
     }
 
