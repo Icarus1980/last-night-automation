@@ -1,26 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Last Night Automation</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet">
   <style>
-    body, html {
+    html, body {
       margin: 0;
       padding: 0;
       overflow: hidden;
-      height: 100%;
-      background: black;
+      background-color: black;
       font-family: 'Orbitron', sans-serif;
       color: #00f7ff;
     }
 
     canvas {
+      display: block;
       position: absolute;
       top: 0;
       left: 0;
-      display: block;
       z-index: 0;
     }
 
@@ -53,57 +52,161 @@
   </style>
 </head>
 <body>
+  <canvas id="flock"></canvas>
+  <h1>Last Night Automation</h1>
+  <footer>Initiating precision... Standby for command.</footer>
 
-<canvas id="dots"></canvas>
-<h1>Last Night Automation</h1>
-<footer>Initiating precision... Standby for command.</footer>
+  <script>
+    const canvas = document.getElementById("flock");
+    const ctx = canvas.getContext("2d");
+    let width = canvas.width = window.innerWidth;
+    let height = canvas.height = window.innerHeight;
 
-<script>
-  const canvas = document.getElementById('dots');
-  const ctx = canvas.getContext('2d');
-  let width, height;
+    window.addEventListener('resize', () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    });
 
-  function resizeCanvas() {
-    width = canvas.width = window.innerWidth;
-    height = canvas.height = window.innerHeight;
-  }
+    class Boid {
+      constructor() {
+        this.position = { x: Math.random() * width, y: Math.random() * height };
+        this.velocity = { x: (Math.random() - 0.5) * 2, y: (Math.random() - 0.5) * 2 };
+        this.acceleration = { x: 0, y: 0 };
+        this.maxSpeed = 2;
+        this.maxForce = 0.05;
+      }
 
-  window.addEventListener('resize', resizeCanvas);
-  resizeCanvas();
+      update() {
+        this.velocity.x += this.acceleration.x;
+        this.velocity.y += this.acceleration.y;
 
-  const DOTS = [];
-  const ROWS = 80;
-  const COLS = 80;
-  const spacing = 20;
+        // Limit speed
+        const speed = Math.sqrt(this.velocity.x ** 2 + this.velocity.y ** 2);
+        if (speed > this.maxSpeed) {
+          this.velocity.x = (this.velocity.x / speed) * this.maxSpeed;
+          this.velocity.y = (this.velocity.y / speed) * this.maxSpeed;
+        }
 
-  for (let y = 0; y < ROWS; y++) {
-    for (let x = 0; x < COLS; x++) {
-      DOTS.push({
-        x0: x * spacing,
-        y0: y * spacing,
-        offset: Math.random() * 1000
-      });
+        this.position.x += this.velocity.x;
+        this.position.y += this.velocity.y;
+
+        this.acceleration.x = 0;
+        this.acceleration.y = 0;
+
+        // Wrap around edges
+        if (this.position.x > width) this.position.x = 0;
+        if (this.position.x < 0) this.position.x = width;
+        if (this.position.y > height) this.position.y = 0;
+        if (this.position.y < 0) this.position.y = height;
+      }
+
+      applyForce(force) {
+        this.acceleration.x += force.x;
+        this.acceleration.y += force.y;
+      }
+
+      flock(boids) {
+        let alignment = { x: 0, y: 0 };
+        let cohesion = { x: 0, y: 0 };
+        let separation = { x: 0, y: 0 };
+        let total = 0;
+        const perceptionRadius = 50;
+
+        for (let other of boids) {
+          const d = Math.hypot(
+            this.position.x - other.position.x,
+            this.position.y - other.position.y
+          );
+          if (other !== this && d < perceptionRadius) {
+            // Alignment
+            alignment.x += other.velocity.x;
+            alignment.y += other.velocity.y;
+
+            // Cohesion
+            cohesion.x += other.position.x;
+            cohesion.y += other.position.y;
+
+            // Separation
+            let diffX = this.position.x - other.position.x;
+            let diffY = this.position.y - other.position.y;
+            if (d > 0) {
+              separation.x += diffX / d;
+              separation.y += diffY / d;
+            }
+
+            total++;
+          }
+        }
+
+        if (total > 0) {
+          // Alignment
+          alignment.x /= total;
+          alignment.y /= total;
+          alignment = steer(this.velocity, alignment, this.maxSpeed, this.maxForce);
+
+          // Cohesion
+          cohesion.x /= total;
+          cohesion.y /= total;
+          cohesion.x -= this.position.x;
+          cohesion.y -= this.position.y;
+          cohesion = steer(this.velocity, cohesion, this.maxSpeed, this.maxForce);
+
+          // Separation
+          separation.x /= total;
+          separation.y /= total;
+          separation = steer(this.velocity, separation, this.maxSpeed, this.maxForce);
+
+          this.applyForce(alignment);
+          this.applyForce(cohesion);
+          this.applyForce(separation);
+        }
+      }
+
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.position.x, this.position.y, 1.5, 0, Math.PI * 2);
+        ctx.fillStyle = "#00f7ff";
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = "#00f7ff";
+        ctx.fill();
+      }
     }
-  }
 
-  function animate(time) {
-    ctx.clearRect(0, 0, width, height);
-    ctx.fillStyle = '#00f7ff';
-    for (let dot of DOTS) {
-      const dx = Math.sin((time + dot.offset) * 0.002) * 5;
-      const dy = Math.cos((time + dot.offset) * 0.002) * 5;
-      const x = dot.x0 + dx - (COLS * spacing) / 2 + width / 2;
-      const y = dot.y0 + dy - (ROWS * spacing) / 2 + height / 2;
-
-      ctx.beginPath();
-      ctx.arc(x, y, 1.2, 0, Math.PI * 2);
-      ctx.fill();
+    function steer(velocity, target, maxSpeed, maxForce) {
+      const desired = { x: target.x, y: target.y };
+      const d = Math.sqrt(desired.x ** 2 + desired.y ** 2);
+      if (d > 0) {
+        desired.x = (desired.x / d) * maxSpeed;
+        desired.y = (desired.y / d) * maxSpeed;
+      }
+      let steer = {
+        x: desired.x - velocity.x,
+        y: desired.y - velocity.y
+      };
+      const s = Math.sqrt(steer.x ** 2 + steer.y ** 2);
+      if (s > maxForce) {
+        steer.x = (steer.x / s) * maxForce;
+        steer.y = (steer.y / s) * maxForce;
+      }
+      return steer;
     }
-    requestAnimationFrame(animate);
-  }
 
-  requestAnimationFrame(animate);
-</script>
+    const boids = [];
+    for (let i = 0; i < 150; i++) {
+      boids.push(new Boid());
+    }
 
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+      for (let boid of boids) {
+        boid.flock(boids);
+        boid.update();
+        boid.draw();
+      }
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+  </script>
 </body>
 </html>
