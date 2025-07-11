@@ -3,43 +3,143 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Last Night Automation - Full Page Info</title>
+  <title>Last Night Automation - Scrollable Info</title>
   <link href="https://fonts.googleapis.com/css2?family=Audiowide&display=swap" rel="stylesheet" />
   <style>
     html, body {
-      margin: 0; padding: 0; overflow: hidden;
+      margin: 0; padding: 0;
       background-color: black;
+      color: #00bbff;
+      font-family: 'Audiowide', cursive;
+      overflow-y: auto;
       height: 100vh;
+      user-select: none;
+    }
+    #container {
+      position: relative;
+      width: 100vw;
+      max-width: 100vw;
+      background-color: black;
+      min-height: 200vh; /* Will be updated dynamically */
     }
     canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none; /* so user can scroll */
+      z-index: 10;
+      background: black;
       display: block;
-      background-color: black;
+    }
+    #textContent {
+      position: relative;
+      max-width: 700px;
+      margin: 220vh auto 40vh auto; /* Push down content below canvas */
+      padding: 20px;
+      font-size: 24px;
+      line-height: 1.5;
+      color: #00bbff;
+      user-select: text;
+      z-index: 1;
     }
   </style>
 </head>
 <body>
-  <canvas id="canvas"></canvas>
+  <div id="container">
+    <canvas id="canvas"></canvas>
+    <div id="textContent" aria-label="Last Night Automation full software information" tabindex="0">
+      <h1>LAST NIGHT AUTOMATION</h1>
+      <p>The ultimate software suite designed for precision and efficiency.</p>
+      <p><strong>Features include:</strong></p>
+      <ul>
+        <li>Real-time system monitoring</li>
+        <li>Automated Windows updates with progress visualization</li>
+        <li>Secure and scheduled backups</li>
+        <li>Comprehensive malware and security scans</li>
+        <li>Transparent logo with live task progress</li>
+        <li>Voice integration and notifications</li>
+        <li>Designed for technicians to automate routine tasks</li>
+      </ul>
+      <p><strong>Tools provided:</strong></p>
+      <ul>
+        <li>Directory watcher and backup utilities</li>
+        <li>Windows Defender scan integration</li>
+        <li>Windows Update automation</li>
+        <li>Notification system using Windows native toast alerts</li>
+      </ul>
+      <p>This software empowers IT professionals to maintain, update, and secure systems seamlessly.</p>
+      <p><em>Initiating precision... Standby for command.</em></p>
+    </div>
+  </div>
 
   <script>
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
-    let width = canvas.width = window.innerWidth;
-    let height = canvas.height = window.innerHeight;
-    const centerX = width / 2;
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+    canvas.width = width;
+    canvas.height = height;
 
-    window.addEventListener('resize', () => {
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
-      createTextTargets();
-      assignTargets();
-    });
+    // Dot properties
+    const PARTICLE_COUNT = 2500;
 
+    // Particle class
+    class Particle {
+      constructor() {
+        this.x = Math.random() * width;
+        this.y = Math.random() * height;
+        this.vx = (Math.random() - 0.5) * 2;
+        this.vy = (Math.random() - 0.5) * 2;
+        this.tx = null; // target x
+        this.ty = null; // target y
+        this.state = 'scatter';
+
+        this.colorDark = 'rgba(0, 51, 102, 0.8)';
+        this.colorNeon = 'rgba(0, 187, 255, 1)';
+        this.color = Math.random() < 0.5 ? this.colorDark : this.colorNeon;
+      }
+      update() {
+        if (this.state === 'form' && this.tx !== null && this.ty !== null) {
+          let dx = this.tx - this.x;
+          let dy = this.ty - this.y;
+          this.vx += dx * 0.03;
+          this.vy += dy * 0.03;
+          this.vx *= 0.8;
+          this.vy *= 0.8;
+        } else if (this.state === 'scatter') {
+          this.vx += (Math.random() - 0.5) * 0.4;
+          this.vy += (Math.random() - 0.5) * 0.4;
+          this.vx *= 0.85;
+          this.vy *= 0.85;
+        }
+        this.x += this.vx;
+        this.y += this.vy;
+
+        if (this.x < -50) this.x = width + 50;
+        if (this.x > width + 50) this.x = -50;
+        if (this.y < -50) this.y = height + 50;
+        if (this.y > height + 50) this.y = -50;
+      }
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, 1.5, 0, Math.PI * 2);
+        const grad = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, 6);
+        grad.addColorStop(0, this.colorNeon);
+        grad.addColorStop(0.6, this.colorDark);
+        grad.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = grad;
+        ctx.shadowColor = this.colorNeon;
+        ctx.shadowBlur = 8;
+        ctx.fill();
+      }
+    }
+
+    // Prepare offscreen canvas for text shape
     const offCanvas = document.createElement('canvas');
     const offCtx = offCanvas.getContext('2d');
 
-    let targetPositions = [];
-
-    // Full detailed info lines for Last Night Automation to fill the page vertically
+    // Text lines to fill the page
     const descriptionLines = [
       "LAST NIGHT AUTOMATION",
       "The ultimate software suite designed for precision and efficiency.",
@@ -61,30 +161,41 @@
       "Initiating precision... Standby for command."
     ];
 
-    function createTextTargets() {
-      offCanvas.width = width;
-      offCanvas.height = height;
-      offCtx.clearRect(0, 0, width, height);
+    // Set font size and line height
+    const fontSize = 44;
+    const lineHeight = 60;
 
-      offCtx.fillStyle = '#fff';
-      offCtx.font = 'bold 36px Audiowide';
+    // Calculate full text block height
+    const textBlockHeight = descriptionLines.length * lineHeight + 200;
+
+    // Set offCanvas size to fit the full text vertically
+    offCanvas.width = width;
+    offCanvas.height = textBlockHeight;
+
+    // Set container's min-height so page can scroll
+    document.getElementById('container').style.minHeight = textBlockHeight + 'px';
+
+    let targetPositions = [];
+
+    function createTextTargets() {
+      offCtx.clearRect(0, 0, offCanvas.width, offCanvas.height);
+      offCtx.fillStyle = 'white';
+      offCtx.font = `bold ${fontSize}px Audiowide`;
       offCtx.textAlign = 'center';
       offCtx.textBaseline = 'middle';
 
-      const lineHeight = 50;
-      const startY = height * 0.1; // start about 10% down from top
-
       for (let i = 0; i < descriptionLines.length; i++) {
-        offCtx.fillText(descriptionLines[i], centerX, startY + i * lineHeight);
+        const y = 100 + i * lineHeight; // top padding 100px
+        offCtx.fillText(descriptionLines[i], width / 2, y);
       }
 
-      const imageData = offCtx.getImageData(0, 0, width, height).data;
-
+      const imageData = offCtx.getImageData(0, 0, offCanvas.width, offCanvas.height).data;
       targetPositions = [];
-      // Sample every 3 pixels horizontally and vertically for better density
-      for (let y = 0; y < height; y += 3) {
-        for (let x = 0; x < width; x += 3) {
-          const idx = (y * width + x) * 4;
+
+      // Sample every 3 pixels for performance and density
+      for (let y = 0; y < offCanvas.height; y += 3) {
+        for (let x = 0; x < offCanvas.width; x += 3) {
+          const idx = (y * offCanvas.width + x) * 4;
           if (imageData[idx + 3] > 150) {
             targetPositions.push({ x, y });
           }
@@ -94,78 +205,6 @@
 
     createTextTargets();
 
-    class Particle {
-      constructor() {
-        this.x = Math.random() * width;
-        this.y = Math.random() * height;
-        this.vx = (Math.random() - 0.5) * 1.5;
-        this.vy = (Math.random() - 0.5) * 1.5;
-
-        this.tx = null;
-        this.ty = null;
-        this.state = 'scatter';
-
-        this.colorDark = 'rgba(0, 51, 102, 0.8)';
-        this.colorNeon = 'rgba(0, 187, 255, 1)';
-        this.color = Math.random() < 0.5 ? this.colorDark : this.colorNeon;
-      }
-
-      update() {
-        if (this.state === 'form' && this.tx !== null && this.ty !== null) {
-          const dx = this.tx - this.x;
-          const dy = this.ty - this.y;
-          this.vx += dx * 0.02;
-          this.vy += dy * 0.02;
-          this.vx *= 0.85;
-          this.vy *= 0.85;
-        } else if (this.state === 'scatter') {
-          this.vx += (Math.random() - 0.5) * 0.3;
-          this.vy += (Math.random() - 0.5) * 0.3;
-          this.vx *= 0.92;
-          this.vy *= 0.92;
-        } else if (this.state === 'expand') {
-          const dx = this.x - centerX;
-          const dy = this.y - height / 2;
-          this.vx += dx * 0.005;
-          this.vy += dy * 0.005;
-          this.vx *= 0.93;
-          this.vy *= 0.93;
-        } else if (this.state === 'return') {
-          if (this.tx !== null && this.ty !== null) {
-            const dx = this.tx - this.x;
-            const dy = this.ty - this.y;
-            this.vx += dx * 0.015;
-            this.vy += dy * 0.015;
-            this.vx *= 0.88;
-            this.vy *= 0.88;
-          } else {
-            this.state = 'scatter';
-          }
-        }
-        this.x += this.vx;
-        this.y += this.vy;
-
-        if (this.x < -50) this.x = width + 50;
-        if (this.x > width + 50) this.x = -50;
-        if (this.y < -50) this.y = height + 50;
-        if (this.y > height + 50) this.y = -50;
-      }
-
-      draw() {
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, 1.6, 0, Math.PI * 2);
-        const grad = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, 6);
-        grad.addColorStop(0, this.colorNeon);
-        grad.addColorStop(0.6, this.colorDark);
-        grad.addColorStop(1, 'rgba(0,0,0,0)');
-        ctx.fillStyle = grad;
-        ctx.shadowColor = this.colorNeon;
-        ctx.shadowBlur = 10;
-        ctx.fill();
-      }
-    }
-
-    const PARTICLE_COUNT = 2800;  // more particles to fill full text area well
     const particles = [];
     for (let i = 0; i < PARTICLE_COUNT; i++) {
       particles.push(new Particle());
@@ -173,8 +212,9 @@
 
     function assignTargets() {
       for (let i = 0; i < particles.length; i++) {
-        particles[i].tx = targetPositions[i % targetPositions.length].x;
-        particles[i].ty = targetPositions[i % targetPositions.length].y;
+        const pos = targetPositions[i % targetPositions.length];
+        particles[i].tx = pos.x;
+        particles[i].ty = pos.y;
       }
     }
 
@@ -188,23 +228,33 @@
 
       ctx.clearRect(0, 0, width, height);
 
-      if (frame === 180) {       // after 3 seconds
+      if (frame === 60) { // Quick scatter intro (1 sec)
         state = 'form';
         particles.forEach(p => p.state = 'form');
-      } else if (frame === 600) { // after 7 seconds forming
-        state = 'expand';
-        particles.forEach(p => p.state = 'expand');
-      } else if (frame === 1020) { // after 7 seconds expanding
-        state = 'return';
-        particles.forEach(p => p.state = 'return');
-      } else if (frame === 1380) { // after 6 seconds returning
+      } else if (frame === 360) { // Hold formed (5 sec)
+        state = 'hold';
+      } else if (frame === 480) { // Scatter again (2 sec)
         state = 'scatter';
         particles.forEach(p => p.state = 'scatter');
+      } else if (frame === 600) { // Loop
         frame = 0;
       }
 
+      if (state === 'hold') {
+        // Do nothing, particles hold position at target
+        particles.forEach(p => {
+          p.vx *= 0.7;
+          p.vy *= 0.7;
+          p.x += p.vx;
+          p.y += p.vy;
+        });
+      } else {
+        particles.forEach(p => {
+          p.update();
+        });
+      }
+
       particles.forEach(p => {
-        p.update();
         p.draw();
       });
 
@@ -212,6 +262,23 @@
     }
 
     animate();
+
+    // Adjust canvas position on scroll to keep fixed size canvas aligned with scroll
+    window.addEventListener('scroll', () => {
+      // no special code needed because canvas is fixed,
+      // text content is scrollable underneath
+    });
+
+    // On window resize recalc
+    window.addEventListener('resize', () => {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+      offCanvas.width = width;
+      createTextTargets();
+      assignTargets();
+    });
   </script>
 </body>
 </html>
