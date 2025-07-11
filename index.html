@@ -1,19 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Last Night Automation - Swarm</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Last Night Automation - Futuristic Flock</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet" />
   <style>
     html, body {
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-      background: black;
+      margin: 0; padding: 0; overflow: hidden;
+      background-color: black;
     }
     canvas {
       display: block;
+      background-color: black;
     }
     footer {
       position: absolute;
@@ -22,130 +21,208 @@
       text-align: center;
       font-family: 'Orbitron', sans-serif;
       font-size: 1rem;
-      color: #00f7ff;
-      text-shadow: 0 0 6px #00f7ff;
+      color: #0077bb;
+      text-shadow: 0 0 10px #004466;
       opacity: 0.8;
+      user-select: none;
+      pointer-events: none;
     }
   </style>
 </head>
 <body>
-<canvas id="canvas"></canvas>
-<footer>Initiating precision... Standby for command.</footer>
-<script>
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+  <canvas id="canvas"></canvas>
+  <footer>Initiating precision... Standby for command.</footer>
 
-const width = canvas.width;
-const height = canvas.height;
-const centerX = width / 2;
-const centerY = height / 2;
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    let width = canvas.width = window.innerWidth;
+    let height = canvas.height = window.innerHeight;
+    const centerX = width / 2;
+    const centerY = height / 2;
 
-const PARTICLE_COUNT = 1200;
-let frame = 0;
-let state = 'free';
+    // Handle resize
+    window.addEventListener('resize', () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+      createTextTargets();
+      assignTargets();
+    });
 
-// --- Text Map Generator ---
-const offCanvas = document.createElement('canvas');
-offCanvas.width = width;
-offCanvas.height = height;
-const offCtx = offCanvas.getContext('2d');
-offCtx.fillStyle = '#fff';
-offCtx.font = 'bold 100px Orbitron';
-offCtx.textAlign = 'center';
-offCtx.fillText('LAST NIGHT AUTOMATION', centerX, centerY);
-const textData = offCtx.getImageData(0, 0, width, height).data;
-const targetPositions = [];
-for (let y = 0; y < height; y += 4) {
-  for (let x = 0; x < width; x += 4) {
-    const i = (y * width + x) * 4;
-    if (textData[i + 3] > 150) {
-      targetPositions.push({ x, y });
+    // Offscreen canvas to create text shape
+    const offCanvas = document.createElement('canvas');
+    const offCtx = offCanvas.getContext('2d');
+
+    let targetPositions = [];
+
+    function createTextTargets() {
+      offCanvas.width = width;
+      offCanvas.height = height;
+      offCtx.clearRect(0, 0, width, height);
+
+      offCtx.fillStyle = '#fff';
+      offCtx.font = 'bold 90px Orbitron';
+      offCtx.textAlign = 'center';
+      offCtx.textBaseline = 'middle';
+
+      // Draw two lines of text
+      offCtx.fillText('LAST NIGHT', centerX, centerY - 45);
+      offCtx.fillText('AUTOMATION', centerX, centerY + 45);
+
+      const imageData = offCtx.getImageData(0, 0, width, height).data;
+
+      targetPositions = [];
+      // Sample every 4 pixels for performance & density
+      for (let y = 0; y < height; y += 4) {
+        for (let x = 0; x < width; x += 4) {
+          const idx = (y * width + x) * 4;
+          if (imageData[idx + 3] > 150) {
+            targetPositions.push({ x, y });
+          }
+        }
+      }
     }
-  }
-}
 
-// --- Particle Constructor ---
-class Particle {
-  constructor() {
-    this.x = Math.random() * width;
-    this.y = Math.random() * height;
-    this.vx = (Math.random() - 0.5) * 2;
-    this.vy = (Math.random() - 0.5) * 2;
-    this.tx = 0;
-    this.ty = 0;
-  }
-  update() {
-    let dx, dy;
-    if (state === 'form' || state === 'return') {
-      dx = this.tx - this.x;
-      dy = this.ty - this.y;
-      this.vx += dx * 0.02;
-      this.vy += dy * 0.02;
-    } else if (state === 'expand') {
-      dx = this.x - centerX;
-      dy = this.y - centerY;
-      this.vx += dx * 0.002;
-      this.vy += dy * 0.002;
-    } else if (state === 'free') {
-      this.vx += (Math.random() - 0.5) * 0.1;
-      this.vy += (Math.random() - 0.5) * 0.1;
+    createTextTargets();
+
+    // Particle class
+    class Particle {
+      constructor() {
+        this.x = Math.random() * width;
+        this.y = Math.random() * height;
+        this.vx = (Math.random() - 0.5) * 1.5;
+        this.vy = (Math.random() - 0.5) * 1.5;
+
+        this.tx = null;  // target x
+        this.ty = null;  // target y
+        this.state = 'scatter'; // initial state: scatter
+
+        // Color cycling between darker and neon blues
+        this.colorDark = 'rgba(0, 51, 102, 0.8)';
+        this.colorNeon = 'rgba(0, 187, 255, 1)';
+        this.color = Math.random() < 0.5 ? this.colorDark : this.colorNeon;
+      }
+
+      update() {
+        if (this.state === 'form' && this.tx !== null && this.ty !== null) {
+          // Move towards target position with easing
+          const dx = this.tx - this.x;
+          const dy = this.ty - this.y;
+          this.vx += dx * 0.02;
+          this.vy += dy * 0.02;
+
+          // Slow down for smooth settle
+          this.vx *= 0.85;
+          this.vy *= 0.85;
+        }
+        else if (this.state === 'scatter') {
+          // Free floating with slight random acceleration
+          this.vx += (Math.random() - 0.5) * 0.3;
+          this.vy += (Math.random() - 0.5) * 0.3;
+          this.vx *= 0.92;
+          this.vy *= 0.92;
+        }
+        else if (this.state === 'expand') {
+          // Move away from center gradually
+          const dx = this.x - centerX;
+          const dy = this.y - centerY;
+          this.vx += dx * 0.005;
+          this.vy += dy * 0.005;
+          this.vx *= 0.93;
+          this.vy *= 0.93;
+        }
+        else if (this.state === 'return') {
+          // Move back towards target position with easing
+          if (this.tx !== null && this.ty !== null) {
+            const dx = this.tx - this.x;
+            const dy = this.ty - this.y;
+            this.vx += dx * 0.015;
+            this.vy += dy * 0.015;
+            this.vx *= 0.88;
+            this.vy *= 0.88;
+          } else {
+            this.state = 'scatter'; // fallback to scatter if no target
+          }
+        }
+
+        this.x += this.vx;
+        this.y += this.vy;
+
+        // Wrap around edges softly
+        if (this.x < -50) this.x = width + 50;
+        if (this.x > width + 50) this.x = -50;
+        if (this.y < -50) this.y = height + 50;
+        if (this.y > height + 50) this.y = -50;
+      }
+
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, 1.6, 0, Math.PI * 2);
+
+        // Glow gradient for neon effect
+        const grad = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, 6);
+        grad.addColorStop(0, this.colorNeon);
+        grad.addColorStop(0.6, this.colorDark);
+        grad.addColorStop(1, 'rgba(0,0,0,0)');
+
+        ctx.fillStyle = grad;
+        ctx.shadowColor = this.colorNeon;
+        ctx.shadowBlur = 10;
+        ctx.fill();
+      }
     }
-    this.vx *= 0.95;
-    this.vy *= 0.95;
-    this.x += this.vx;
-    this.y += this.vy;
 
-    // Boundary wrap
-    if (this.x < 0) this.x = width;
-    if (this.x > width) this.x = 0;
-    if (this.y < 0) this.y = height;
-    if (this.y > height) this.y = 0;
-  }
-  draw() {
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, 1.2, 0, Math.PI * 2);
-    ctx.fillStyle = '#00f7ff';
-    ctx.shadowBlur = 10;
-    ctx.shadowColor = '#00f7ff';
-    ctx.fill();
-  }
-}
+    // Create particles
+    const PARTICLE_COUNT = 1800;
+    const particles = [];
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+      particles.push(new Particle());
+    }
 
-// --- Create Particles ---
-const particles = [];
-for (let i = 0; i < PARTICLE_COUNT; i++) {
-  const p = new Particle();
-  if (i < targetPositions.length) {
-    p.tx = targetPositions[i].x;
-    p.ty = targetPositions[i].y;
-  } else {
-    const t = targetPositions[Math.floor(Math.random() * targetPositions.length)];
-    p.tx = t.x;
-    p.ty = t.y;
-  }
-  particles.push(p);
-}
+    // Assign target positions to particles
+    function assignTargets() {
+      for (let i = 0; i < particles.length; i++) {
+        particles[i].tx = targetPositions[i % targetPositions.length].x;
+        particles[i].ty = targetPositions[i % targetPositions.length].y;
+      }
+    }
 
-// --- Animation Loop ---
-function animate() {
-  ctx.clearRect(0, 0, width, height);
-  frame++;
+    assignTargets();
 
-  if (frame === 120) state = 'form'; // 2s
-  if (frame === 420) state = 'expand'; // 5s later
-  if (frame === 720) state = 'return'; // 5s later
-  if (frame === 1020) { state = 'free'; frame = 0; } // reset
+    let frame = 0;
+    let state = 'scatter';
 
-  for (let p of particles) {
-    p.update();
-    p.draw();
-  }
-  requestAnimationFrame(animate);
-}
+    function animate() {
+      frame++;
 
-animate();
-</script>
+      ctx.clearRect(0, 0, width, height);
+
+      // State timing control (all times in frames, approx 60fps)
+      if (frame === 180) {       // after 3 sec
+        state = 'form';
+        particles.forEach(p => p.state = 'form');
+      } else if (frame === 480) { // after 5 sec form
+        state = 'expand';
+        particles.forEach(p => p.state = 'expand');
+      } else if (frame === 780) { // after 5 sec expand
+        state = 'return';
+        particles.forEach(p => p.state = 'return');
+      } else if (frame === 1020) { // after 4 sec return
+        state = 'scatter';
+        particles.forEach(p => p.state = 'scatter');
+        frame = 0; // loop
+      }
+
+      // Update and draw all particles
+      particles.forEach(p => {
+        p.update();
+        p.draw();
+      });
+
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+  </script>
 </body>
 </html>
