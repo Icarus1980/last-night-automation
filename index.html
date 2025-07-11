@@ -2,85 +2,71 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Last Night Automation</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet">
   <style>
-    body {
-      background-color: #0a0f1c;
-      color: #e0e0e0;
-      font-family: 'Segoe UI', sans-serif;
-      padding: 2rem;
-      line-height: 1.6;
-    }
-    h1 {
-      font-size: 2.5rem;
-      color: cyan;
-    }
-    h2 {
-      color: #00f0ff;
-      margin-top: 2rem;
-    }
-    a.button {
-      display: inline-block;
-      background: #101820;
-      color: cyan;
-      padding: 0.75rem 1.5rem;
-      text-decoration: none;
-      font-weight: bold;
-      border-radius: 8px;
-      margin-top: 1rem;
-    }
-    ul {
-      list-style: none;
+    * {
+      margin: 0;
       padding: 0;
+      box-sizing: border-box;
     }
-    ul li::before {
-      content: "🟢 ";
-      margin-right: 5px;
+
+    body {
+      background: radial-gradient(circle at 50% 50%, #0d1b2a 0%, #000 100%);
+      background-image: radial-gradient(circle, rgba(0, 255, 255, 0.1) 1px, transparent 1px);
+      background-size: 20px 20px;
+      font-family: 'Orbitron', sans-serif;
+      color: #00f7ff;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      animation: pulseBG 10s infinite alternate;
     }
-    .footer {
-      margin-top: 4rem;
-      font-size: 0.9rem;
-      color: gray;
+
+    @keyframes pulseBG {
+      0% { background-size: 20px 20px; }
+      100% { background-size: 25px 25px; }
+    }
+
+    h1 {
+      font-size: 3em;
+      text-shadow: 0 0 5px #00f7ff, 0 0 10px #00f7ff;
+      margin-bottom: 20px;
+    }
+
+    .face {
+      width: 200px;
+      height: 200px;
+      background-image: url("ai_face_dots_neon.png"); /* Replace with actual AI face */
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      opacity: 0.8;
+      animation: pulse 3s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 0.9; }
+      50% { transform: scale(1.03); opacity: 1; }
+      100% { transform: scale(1); opacity: 0.9; }
+    }
+
+    footer {
+      position: absolute;
+      bottom: 20px;
+      font-size: 0.9em;
+      color: #00f7ff;
+      opacity: 0.6;
     }
   </style>
 </head>
 <body>
-
+  <div class="face"></div>
   <h1>Last Night Automation</h1>
-  <p><em>“Automate everything. Sleep well. Wake up protected.”</em></p>
-  <p>Last Night Automation is your all-in-one Windows technician tool. It runs silently in the background, securing your system, backing up data, and preparing your machine for a new day.</p>
-
-  <a href="LNA.exe" class="button" download>⬇ Download v1.0.3</a>
-
-  <h2>🚀 Features</h2>
-  <ul>
-    <li>Auto backup of My Documents to <code>C:\Backups of Documents</code></li>
-    <li>Windows Defender scan (logs results)</li>
-    <li>Internet connection check with fallback</li>
-    <li>Silent Windows Updates (skips if offline)</li>
-    <li>Windows toast notifications after each task</li>
-    <li>Modular, fast, and terminal-only (no GUI errors)</li>
-  </ul>
-
-  <h2>📝 Changelog</h2>
-  <ul>
-    <li><strong>v1.0.3</strong> - Defender check fixed, notifications added</li>
-    <li><strong>v1.0.2</strong> - Backup skips OneDrive and AppData</li>
-    <li><strong>v1.0.1</strong> - Initial release with backup + update core</li>
-  </ul>
-
-  <h2>📬 Feedback</h2>
-  <p>Help us improve. [<a href="mailto:your.email@example.com">Send feedback via email</a>]</p>
-
-  <h2>💖 Support the Project</h2>
-  <p>Secure donation options coming soon.</p>
-  <p>Your support helps build future automation tools and keep them free for all.</p>
-
-  <div class="footer">
-    Built by Martin — Powered by Revelation Node v1.0<br/>
-    <em>“Whatever you do, work at it with all your heart…” — Col 3:23</em>
-  </div>
-
+  <footer>Initiating precision... Standby for command.</footer>
 </body>
 </html>
