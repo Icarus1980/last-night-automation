@@ -11,16 +11,10 @@
       padding: 0;
       overflow: hidden;
       background-color: black;
-      font-family: 'Orbitron', sans-serif;
-      color: #00f7ff;
     }
 
     canvas {
       display: block;
-      position: absolute;
-      top: 0;
-      left: 0;
-      z-index: 0;
     }
 
     footer {
@@ -29,156 +23,122 @@
       width: 100%;
       text-align: center;
       z-index: 1;
+      font-family: 'Orbitron', sans-serif;
       font-size: 1rem;
-      text-shadow: 0 0 5px #00f7ff;
+      color: #00f7ff;
+      text-shadow: 0 0 6px #00f7ff;
       opacity: 0.8;
     }
   </style>
 </head>
 <body>
-  <canvas id="flock"></canvas>
+  <canvas id="canvas"></canvas>
   <footer>Initiating precision... Standby for command.</footer>
 
   <script>
-    const canvas = document.getElementById("flock");
-    const ctx = canvas.getContext("2d");
-    let width = canvas.width = window.innerWidth;
-    let height = canvas.height = window.innerHeight;
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 
-    window.addEventListener('resize', () => {
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
-    });
+    const width = canvas.width;
+    const height = canvas.height;
 
-    class Boid {
+    // === Text target formation ===
+    const textCanvas = document.createElement('canvas');
+    const textCtx = textCanvas.getContext('2d');
+    textCanvas.width = width;
+    textCanvas.height = height;
+    textCtx.fillStyle = '#fff';
+    textCtx.font = 'bold 60px Orbitron';
+    textCtx.textAlign = 'center';
+    textCtx.fillText('Last Night Automation', width / 2, height / 2);
+    const textPixels = textCtx.getImageData(0, 0, width, height).data;
+
+    const targetPoints = [];
+    for (let y = 0; y < height; y += 6) {
+      for (let x = 0; x < width; x += 6) {
+        const i = (y * width + x) * 4;
+        if (textPixels[i + 3] > 128) {
+          targetPoints.push({ x, y });
+        }
+      }
+    }
+
+    class Dot {
       constructor() {
-        this.position = { x: Math.random() * width, y: Math.random() * height };
-        this.velocity = { x: (Math.random() - 0.5) * 2, y: (Math.random() - 0.5) * 2 };
-        this.acceleration = { x: 0, y: 0 };
-        this.maxSpeed = 2;
-        this.maxForce = 0.05;
+        this.x = Math.random() * width;
+        this.y = Math.random() * height;
+        this.vx = (Math.random() - 0.5) * 1.5;
+        this.vy = (Math.random() - 0.5) * 1.5;
+        this.target = null;
+        this.state = 'free';
       }
 
       update() {
-        this.velocity.x += this.acceleration.x;
-        this.velocity.y += this.acceleration.y;
-
-        const speed = Math.sqrt(this.velocity.x ** 2 + this.velocity.y ** 2);
-        if (speed > this.maxSpeed) {
-          this.velocity.x = (this.velocity.x / speed) * this.maxSpeed;
-          this.velocity.y = (this.velocity.y / speed) * this.maxSpeed;
+        if (this.state === 'form' && this.target) {
+          const dx = this.target.x - this.x;
+          const dy = this.target.y - this.y;
+          this.vx += dx * 0.01;
+          this.vy += dy * 0.01;
+          this.vx *= 0.9;
+          this.vy *= 0.9;
+        } else if (this.state === 'free') {
+          this.vx += (Math.random() - 0.5) * 0.1;
+          this.vy += (Math.random() - 0.5) * 0.1;
+          this.vx *= 0.98;
+          this.vy *= 0.98;
         }
 
-        this.position.x += this.velocity.x;
-        this.position.y += this.velocity.y;
+        this.x += this.vx;
+        this.y += this.vy;
 
-        this.acceleration.x = 0;
-        this.acceleration.y = 0;
-
-        // Wrap around
-        if (this.position.x > width) this.position.x = 0;
-        if (this.position.x < 0) this.position.x = width;
-        if (this.position.y > height) this.position.y = 0;
-        if (this.position.y < 0) this.position.y = height;
-      }
-
-      applyForce(force) {
-        this.acceleration.x += force.x;
-        this.acceleration.y += force.y;
-      }
-
-      flock(boids) {
-        let alignment = { x: 0, y: 0 };
-        let cohesion = { x: 0, y: 0 };
-        let separation = { x: 0, y: 0 };
-        let total = 0;
-        const perceptionRadius = 50;
-
-        for (let other of boids) {
-          const d = Math.hypot(
-            this.position.x - other.position.x,
-            this.position.y - other.position.y
-          );
-          if (other !== this && d < perceptionRadius) {
-            alignment.x += other.velocity.x;
-            alignment.y += other.velocity.y;
-
-            cohesion.x += other.position.x;
-            cohesion.y += other.position.y;
-
-            let diffX = this.position.x - other.position.x;
-            let diffY = this.position.y - other.position.y;
-            if (d > 0) {
-              separation.x += diffX / d;
-              separation.y += diffY / d;
-            }
-
-            total++;
-          }
-        }
-
-        if (total > 0) {
-          alignment.x /= total;
-          alignment.y /= total;
-          alignment = steer(this.velocity, alignment, this.maxSpeed, this.maxForce);
-
-          cohesion.x /= total;
-          cohesion.y /= total;
-          cohesion.x -= this.position.x;
-          cohesion.y -= this.position.y;
-          cohesion = steer(this.velocity, cohesion, this.maxSpeed, this.maxForce);
-
-          separation.x /= total;
-          separation.y /= total;
-          separation = steer(this.velocity, separation, this.maxSpeed, this.maxForce);
-
-          this.applyForce(alignment);
-          this.applyForce(cohesion);
-          this.applyForce(separation);
-        }
+        if (this.x < 0) this.x = width;
+        if (this.x > width) this.x = 0;
+        if (this.y < 0) this.y = height;
+        if (this.y > height) this.y = 0;
       }
 
       draw() {
         ctx.beginPath();
-        ctx.arc(this.position.x, this.position.y, 1.2, 0, Math.PI * 2);
-        ctx.fillStyle = "#00f7ff";
+        ctx.arc(this.x, this.y, 1.5, 0, Math.PI * 2);
+        ctx.fillStyle = '#00f7ff';
+        ctx.shadowColor = '#00f7ff';
         ctx.shadowBlur = 10;
-        ctx.shadowColor = "#00f7ff";
         ctx.fill();
       }
     }
 
-    function steer(velocity, target, maxSpeed, maxForce) {
-      const desired = { x: target.x, y: target.y };
-      const d = Math.sqrt(desired.x ** 2 + desired.y ** 2);
-      if (d > 0) {
-        desired.x = (desired.x / d) * maxSpeed;
-        desired.y = (desired.y / d) * maxSpeed;
-      }
-      let steer = {
-        x: desired.x - velocity.x,
-        y: desired.y - velocity.y
-      };
-      const s = Math.sqrt(steer.x ** 2 + steer.y ** 2);
-      if (s > maxForce) {
-        steer.x = (steer.x / s) * maxForce;
-        steer.y = (steer.y / s) * maxForce;
-      }
-      return steer;
+    const dots = [];
+    const DOT_COUNT = targetPoints.length;
+    for (let i = 0; i < DOT_COUNT; i++) {
+      const dot = new Dot();
+      dot.target = targetPoints[i];
+      dots.push(dot);
     }
 
-    const boids = [];
-    for (let i = 0; i < 400; i++) {
-      boids.push(new Boid());
-    }
+    let frame = 0;
 
     function animate() {
       ctx.clearRect(0, 0, width, height);
-      for (let boid of boids) {
-        boid.flock(boids);
-        boid.update();
-        boid.draw();
+
+      frame++;
+
+      // Phase control
+      if (frame === 180) { // 3 seconds
+        dots.forEach(dot => dot.state = 'form');
       }
+
+      if (frame === 420) { // hold for 4 seconds
+        dots.forEach(dot => dot.state = 'free');
+        dots.forEach(dot => dot.target = null);
+      }
+
+      dots.forEach(dot => {
+        dot.update();
+        dot.draw();
+      });
+
       requestAnimationFrame(animate);
     }
 
