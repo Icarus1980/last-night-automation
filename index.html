@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Last Night Automation - Full Description</title>
+  <title>Last Night Automation - Full Page Info</title>
   <link href="https://fonts.googleapis.com/css2?family=Audiowide&display=swap" rel="stylesheet" />
   <style>
     html, body {
@@ -27,10 +27,6 @@
     let height = canvas.height = window.innerHeight;
     const centerX = width / 2;
 
-    // Vertical starting position near top (10% down)
-    const topStartY = height * 0.1;
-    const lineHeight = 55; // space between lines
-
     window.addEventListener('resize', () => {
       width = canvas.width = window.innerWidth;
       height = canvas.height = window.innerHeight;
@@ -43,13 +39,25 @@
 
     let targetPositions = [];
 
-    // Multi-line description text for Last Night Automation
+    // Full detailed info lines for Last Night Automation to fill the page vertically
     const descriptionLines = [
       "LAST NIGHT AUTOMATION",
-      "Software Suite for Precision",
-      "System Monitoring, Updates,",
-      "Backups, Security Scanning,",
-      "And Automated Technician Tools",
+      "The ultimate software suite designed for precision and efficiency.",
+      "Features include:",
+      "- Real-time system monitoring",
+      "- Automated Windows updates with progress visualization",
+      "- Secure and scheduled backups",
+      "- Comprehensive malware and security scans",
+      "- Transparent logo with live task progress",
+      "- Voice integration and notifications",
+      "- Designed for technicians to automate routine tasks",
+      "Tools provided:",
+      "- Directory watcher and backup utilities",
+      "- Windows Defender scan integration",
+      "- Windows Update automation",
+      "- Notification system using Windows native toast alerts",
+      "This software empowers IT professionals",
+      "to maintain, update, and secure systems seamlessly.",
       "Initiating precision... Standby for command."
     ];
 
@@ -59,17 +67,21 @@
       offCtx.clearRect(0, 0, width, height);
 
       offCtx.fillStyle = '#fff';
-      offCtx.font = 'bold 45px Audiowide';
+      offCtx.font = 'bold 36px Audiowide';
       offCtx.textAlign = 'center';
       offCtx.textBaseline = 'middle';
 
+      const lineHeight = 50;
+      const startY = height * 0.1; // start about 10% down from top
+
       for (let i = 0; i < descriptionLines.length; i++) {
-        offCtx.fillText(descriptionLines[i], centerX, topStartY + i * lineHeight);
+        offCtx.fillText(descriptionLines[i], centerX, startY + i * lineHeight);
       }
 
       const imageData = offCtx.getImageData(0, 0, width, height).data;
 
       targetPositions = [];
+      // Sample every 3 pixels horizontally and vertically for better density
       for (let y = 0; y < height; y += 3) {
         for (let x = 0; x < width; x += 3) {
           const idx = (y * width + x) * 4;
@@ -113,7 +125,7 @@
           this.vy *= 0.92;
         } else if (this.state === 'expand') {
           const dx = this.x - centerX;
-          const dy = this.y - topStartY - ((descriptionLines.length - 1) * lineHeight) / 2;
+          const dy = this.y - height / 2;
           this.vx += dx * 0.005;
           this.vy += dy * 0.005;
           this.vx *= 0.93;
@@ -153,7 +165,7 @@
       }
     }
 
-    const PARTICLE_COUNT = 2200;
+    const PARTICLE_COUNT = 2800;  // more particles to fill full text area well
     const particles = [];
     for (let i = 0; i < PARTICLE_COUNT; i++) {
       particles.push(new Particle());
@@ -176,16 +188,16 @@
 
       ctx.clearRect(0, 0, width, height);
 
-      if (frame === 180) {       // after 3 sec
+      if (frame === 180) {       // after 3 seconds
         state = 'form';
         particles.forEach(p => p.state = 'form');
-      } else if (frame === 480) { // after 5 sec form
+      } else if (frame === 600) { // after 7 seconds forming
         state = 'expand';
         particles.forEach(p => p.state = 'expand');
-      } else if (frame === 780) { // after 5 sec expand
+      } else if (frame === 1020) { // after 7 seconds expanding
         state = 'return';
         particles.forEach(p => p.state = 'return');
-      } else if (frame === 1020) { // after 4 sec return
+      } else if (frame === 1380) { // after 6 seconds returning
         state = 'scatter';
         particles.forEach(p => p.state = 'scatter');
         frame = 0;
