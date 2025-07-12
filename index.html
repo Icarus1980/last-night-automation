@@ -1,64 +1,122 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Last Night Automation - Info & Plans</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Audiowide&display=swap');
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Last Night Automation</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Open+Sans&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #010b10 0%, #020d14 100%);
+      color: #00f0ff;
+      font-family: 'Open Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
 
-  body {
-    margin: 0; padding: 0;
-    background-color: #010b10;
-    color: #00bbff;
-    font-family: 'Audiowide', cursive, monospace;
-    line-height: 1.5;
-    min-height: 100vh;
-  }
-  .container {
-    max-width: 800px;
-    margin: 3rem auto 5rem;
-    padding: 1rem 2rem;
-    background-color: #02151d;
-    border-radius: 12px;
-    box-shadow: 0 0 12px #0088cc88;
-  }
-  h1 {
-    text-align: center;
-    font-size: 2.8rem;
-    margin-bottom: 0.5rem;
-    letter-spacing: 3px;
-  }
-  h2 {
-    border-bottom: 2px solid #0088cc;
-    padding-bottom: 0.3rem;
-    margin-top: 2rem;
-    margin-bottom: 1rem;
-    font-weight: 700;
-  }
-  ul {
-    margin-left: 1.2rem;
-  }
-  li {
-    margin-bottom: 0.5rem;
-  }
-  p {
-    margin-top: 1rem;
-    font-size: 1.15rem;
-  }
-  footer {
-    text-align: center;
-    margin-top: 3rem;
-    font-size: 0.9rem;
-    color: #005577cc;
-  }
-</style>
+    header {
+      background: rgba(0, 0, 0, 0.7);
+      padding: 2rem 1rem;
+      text-align: center;
+      box-shadow: 0 0 20px #00e0ff88;
+    }
+
+    header h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 3rem;
+      color: #00f0ff;
+      margin: 0;
+      letter-spacing: 4px;
+      text-shadow: 0 0 12px #00e0ff;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 2rem auto;
+      background: #031a23;
+      padding: 2rem 2.5rem;
+      border-radius: 16px;
+      box-shadow: 0 0 15px #0099cc66;
+    }
+
+    h2 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.6rem;
+      color: #00ccff;
+      border-bottom: 2px solid #0088cc;
+      padding-bottom: 0.5rem;
+      margin-top: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    ul {
+      padding-left: 1.5rem;
+    }
+
+    li {
+      margin-bottom: 0.6rem;
+      font-size: 1.05rem;
+    }
+
+    p {
+      font-size: 1.1rem;
+      margin: 1rem 0;
+      color: #aad6ff;
+    }
+
+    footer {
+      text-align: center;
+      margin: 3rem 0 1rem;
+      font-size: 0.9rem;
+      color: #0077aa;
+    }
+
+    .btn {
+      display: inline-block;
+      margin-top: 1rem;
+      padding: 0.8rem 1.5rem;
+      border: 2px solid #00eaff;
+      border-radius: 8px;
+      background-color: transparent;
+      color: #00eaff;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1rem;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .btn:hover {
+      background-color: #00eaff22;
+      box-shadow: 0 0 10px #00eaff;
+      transform: scale(1.05);
+    }
+
+    @media (max-width: 768px) {
+      header h1 {
+        font-size: 2.2rem;
+      }
+
+      .container {
+        padding: 1.5rem;
+      }
+
+      h2 {
+        font-size: 1.3rem;
+      }
+    }
+  </style>
 </head>
 <body>
-  <div class="container" role="main">
-    <h1>LAST NIGHT AUTOMATION</h1>
-    <p><em>Initiating precision... Standby for command.</em></p>
 
+  <header>
+    <h1>LAST NIGHT AUTOMATION</h1>
+    <p><em>Initiating precision. Standby for command...</em></p>
+  </header>
+
+  <div class="container">
     <h2>Working Tools</h2>
     <ul>
       <li>Real-time system monitoring and reporting</li>
@@ -93,9 +151,11 @@
       <li>Integration with corporate network policies and security</li>
     </ul>
 
-    <footer>
-      &copy; 2025 Last Night Automation | Powered by Martin's Vision
-    </footer>
+    <a class="btn" href="#">View GitHub Repo</a>
   </div>
+
+  <footer>
+    &copy; 2025 Last Night Automation | Powered by Martin's Vision
+  </footer>
 </body>
 </html>
