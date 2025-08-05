@@ -19,9 +19,10 @@
 
     header {
       background: rgba(0, 0, 0, 0.7);
-      padding: 2rem 1rem;
+      padding: 1rem;
       text-align: center;
       box-shadow: 0 0 20px #00e0ff88;
+      position: relative;
     }
 
     header h1 {
@@ -33,17 +34,27 @@
       text-shadow: 0 0 12px #00e0ff;
     }
 
-    .logo-container {
-      text-align: center;
-      margin: 1rem 0 2rem 0;
+    header p {
+      margin: 0.5rem 0 0 0;
     }
 
-    .logo-container img {
-      width: 120px;
-      margin: 0 15px;
-      vertical-align: middle;
-      border-radius: 12px;
-      box-shadow: 0 0 15px #00e0ff88;
+    /* Logo positions */
+    .logo-left, .logo-right {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 80px;
+      height: auto;
+      border-radius: 10px;
+      box-shadow: 0 0 12px #00e0ff88;
+    }
+
+    .logo-left {
+      left: 20px;
+    }
+
+    .logo-right {
+      right: 20px;
     }
 
     .container {
@@ -109,20 +120,11 @@
 
     @media (max-width: 768px) {
       header h1 {
-        font-size: 2.2rem;
+        font-size: 2rem;
       }
 
-      .container {
-        padding: 1.5rem;
-      }
-
-      h2 {
-        font-size: 1.3rem;
-      }
-
-      .logo-container img {
-        width: 90px;
-        margin: 0 10px;
+      .logo-left, .logo-right {
+        width: 60px;
       }
     }
   </style>
@@ -130,14 +132,11 @@
 <body>
 
   <header>
+    <img class="logo-left" src="https://raw.githubusercontent.com/Icarus1980/last-night-automation/main/logo2.png" alt="Logo2">
     <h1>LAST NIGHT AUTOMATION</h1>
+    <img class="logo-right" src="https://raw.githubusercontent.com/Icarus1980/last-night-automation/main/face.png" alt="Face">
     <p><em>Initiating precision. Standby for command...</em></p>
   </header>
-
-  <div class="logo-container">
-    <img src="https://raw.githubusercontent.com/Icarus1980/last-night-automation/main/logo2.png" alt="Logo2" />
-    <img src="https://raw.githubusercontent.com/Icarus1980/last-night-automation/main/face.png" alt="Face" />
-  </div>
 
   <div class="container">
     <h2>Working Tools</h2>
@@ -147,7 +146,6 @@
       <li>Scheduled and selective folder backups</li>
       <li>Malwarebytes and ESET scanning integrations</li>
       <li>Internet connectivity checks with notifications</li>
-      <li>System cleanup and bloatware removal</li>
       <li>Voice greeting and audible status updates</li>
       <li>Animated logo pulse indicating activity</li>
     </ul>
