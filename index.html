@@ -214,69 +214,57 @@
       <li><strong>Bundled assets:</strong> Logos and images are included in the EXE build so the animated/branding icons display correctly.</li>
     </ul>
 
-    <!-- Report a Bug section -->
-    <div class="report-panel" id="report">
-      <h2 style="margin-top:0;">Report a Bug</h2>
-      <p class="lead">Describe the issue and include steps to reproduce. Your message will open in the default mail client.</p>
+   <!-- Report a Bug section -->
+<div class="report-panel" id="report">
+  <h2 style="margin-top:0;">Report a Bug</h2>
+  <p class="lead">Describe the issue and include steps to reproduce. This form sends your report securely via Formspree.</p>
 
-      <form action="mailto:lastnighttechnologies@gmail.com" method="post" enctype="text/plain">
-        <div class="form-row">
-          <div class="col">
-            <label for="name">Your name</label>
-            <input id="name" name="Name" type="text" placeholder="Full name (optional)">
-          </div>
-          <div class="col">
-            <label for="email">Your email</label>
-            <input id="email" name="Email" type="email" placeholder="you@example.com" required>
-          </div>
-        </div>
+  <form id="bugForm" action="https://formspree.io/f/mblkzazq" method="POST">
+    <label for="email">Your email:</label>
+    <input id="email" name="email" type="email" placeholder="you@example.com" required>
 
-        <div style="margin-bottom:.9rem;">
-          <label for="subject">Subject</label>
-          <input id="subject" name="Subject" type="text" placeholder="Short summary (e.g. 'Backup fails on drive D:')">
-        </div>
+    <label for="message">Your message:</label>
+    <textarea id="message" name="message" placeholder="Describe your issue here..." required></textarea>
 
-        <div style="margin-bottom:.9rem;">
-          <label for="severity">Severity</label>
-          <select id="severity" name="Severity">
-            <option>Low - cosmetic / suggestion</option>
-            <option>Medium - intermittent</option>
-            <option>High - reproducible / breaks feature</option>
-            <option>Critical - data loss / security</option>
-          </select>
-        </div>
+    <button type="submit" class="btn">Send</button>
+    <span id="formStatus" style="margin-left:10px;color:var(--neon-weak)"></span>
+  </form>
+</div>
 
-        <div style="margin-bottom:.9rem;">
-          <label for="steps">Steps to reproduce</label>
-          <textarea id="steps" name="Steps" placeholder="1) …  2) …  3) …" required></textarea>
-        </div>
+<script>
+document.getElementById('bugForm').addEventListener('submit', async function (e) {
+  e.preventDefault();
+  const status = document.getElementById('formStatus');
+  status.style.color = 'var(--neon-weak)';
+  status.textContent = 'Sending…';
 
-        <div style="margin-bottom:.9rem;">
-          <label for="expected">Expected result</label>
-          <input id="expected" name="Expected" type="text" placeholder="What you expected to happen">
-        </div>
+  const form = e.target;
+  const endpoint = form.action;
+  const formData = new FormData(form);
 
-        <div style="margin-bottom:.9rem;">
-          <label for="actual">Actual result</label>
-          <input id="actual" name="Actual" type="text" placeholder="What actually happened" required>
-        </div>
+  try {
+    const res = await fetch(endpoint, {
+      method: 'POST',
+      body: formData,
+      headers: { 'Accept': 'application/json' }
+    });
 
-        <div class="small">If you want to include screenshots or log files, attach them manually to the email that opens, or send them to <a class="muted-link" href="mailto:lastnighttechnologies@gmail.com">lastnighttechnologies@gmail.com</a>.</div>
+    if (res.ok) {
+      status.style.color = '#7efb9a';
+      status.textContent = 'Thanks — report sent!';
+      form.reset();
+    } else {
+      const data = await res.json().catch(() => ({}));
+      status.style.color = '#ff9b9b';
+      status.textContent = data.error || 'There was an error submitting the form.';
+    }
+  } catch (err) {
+    status.style.color = '#ff9b9b';
+    status.textContent = 'Network error — please try again.';
+  }
 
-        <div class="actions">
-          <button type="submit" class="btn">Send Report</button>
-          <a class="muted-link" href="mailto:lastnighttechnologies@gmail.com">Or email us directly</a>
-        </div>
-      </form>
-    </div>
-    <!-- End Report panel -->
-
-    <a class="btn" href="#">View GitHub Repo</a>
-  </div>
-
-  <footer>
-    &copy; 2025 Last Night Technologies | Starlings Swarm Logic<br>
-    Support: <a href="mailto:lastnighttechnologies@gmail.com">lastnighttechnologies@gmail.com</a>
-  </footer>
+  setTimeout(() => { status.textContent = ''; }, 7000);
+});
+</script>
 </body>
 </html>
