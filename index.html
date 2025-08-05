@@ -140,15 +140,16 @@
       <li>Support for multiple languages and accessibility features</li>
     </ul>
 
-    <h2>Future Build Plans</h2>
+    <h2>Release Notes — Current Program</h2>
     <ul>
-      <li>Full GUI version with dynamic task progress bars</li>
-      <li>Cloud backup and remote system management</li>
-      <li>AI-driven diagnostics and automated issue resolution</li>
-      <li>Mobile app companion for monitoring and control</li>
-      <li>Plugin system to add custom technician tools</li>
-      <li>Automated scheduling and intelligent task prioritization</li>
-      <li>Integration with corporate network policies and security</li>
+      <li><strong>DNS Lookup fix:</strong> DNS prompt now runs on the main thread to avoid Tkinter dialog errors; results stream correctly into the Network Tools output box.</li>
+      <li><strong>Netstat improvement:</strong> Netstat button uses numeric output with PID (e.g., <code>netstat -ano</code>) so connections can be traced to processes.</li>
+      <li><strong>Speedtest compatibility:</strong> Added a small shim so speedtest runs correctly in the packaged EXE (handles Python3 <code>__builtin__</code> expectation and missing stdout).</li>
+      <li><strong>Windowed EXE support:</strong> Early guard added to ensure <code>sys.stdout</code> / <code>sys.stderr</code> are valid in a windowed build (prevents <code>fileno()</code> errors).</li>
+      <li><strong>Legacy import shim:</strong> A tiny <code>__builtin__.py</code> compatibility file is included for libraries expecting the Python-2 module name.</li>
+      <li><strong>No console pop-ups:</strong> Subprocess launches (e.g., robocopy) are run with flags that keep Windows command windows hidden when running the GUI EXE.</li>
+      <li><strong>Bundled assets:</strong> Logos and images are included in the EXE build so the animated/branding icons display correctly.</li>
+      <li><strong>Packaging notes:</strong> Built with PyInstaller; images are added as data so <code>resource_path()</code> finds them at runtime.</li>
     </ul>
 
     <a class="btn" href="#">View GitHub Repo</a>
