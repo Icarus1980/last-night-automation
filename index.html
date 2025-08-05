@@ -6,11 +6,21 @@
   <title>Last Night Technologies</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Open+Sans&display=swap" rel="stylesheet">
   <style>
+    :root{
+      --bg1: #010b10;
+      --bg2: #020d14;
+      --panel: #031a23;
+      --neon: #00f0ff;
+      --neon-weak: #00ccff;
+      --muted: #aad6ff;
+    }
+
+    *{box-sizing: border-box}
     body {
       margin: 0;
       padding: 0;
-      background: linear-gradient(135deg, #010b10 0%, #020d14 100%);
-      color: #00f0ff;
+      background: linear-gradient(135deg, var(--bg1) 0%, var(--bg2) 100%);
+      color: var(--neon);
       font-family: 'Open Sans', sans-serif;
       min-height: 100vh;
       display: flex;
@@ -28,7 +38,7 @@
     header h1 {
       font-family: 'Orbitron', sans-serif;
       font-size: 3rem;
-      color: #00f0ff;
+      color: var(--neon);
       margin: 0;
       letter-spacing: 4px;
       text-shadow: 0 0 12px #00e0ff;
@@ -36,6 +46,7 @@
 
     header p {
       margin: 0.5rem 0 0 0;
+      color: var(--muted);
     }
 
     /* Logo positions */
@@ -49,18 +60,13 @@
       box-shadow: 0 0 12px #00e0ff88;
     }
 
-    .logo-left {
-      left: 20px;
-    }
-
-    .logo-right {
-      right: 20px;
-    }
+    .logo-left { left: 20px; }
+    .logo-right { right: 20px; }
 
     .container {
       max-width: 1000px;
       margin: 2rem auto;
-      background: #031a23;
+      background: var(--panel);
       padding: 2rem 2.5rem;
       border-radius: 16px;
       box-shadow: 0 0 15px #0099cc66;
@@ -69,63 +75,97 @@
     h2 {
       font-family: 'Orbitron', sans-serif;
       font-size: 1.6rem;
-      color: #00ccff;
+      color: var(--neon-weak);
       border-bottom: 2px solid #0088cc;
       padding-bottom: 0.5rem;
       margin-top: 2.5rem;
       margin-bottom: 1rem;
     }
 
-    ul {
-      padding-left: 1.5rem;
+    .lead { color: var(--muted); margin-bottom: 1rem; }
+
+    ul { padding-left: 1.5rem; }
+    li { margin-bottom: 0.6rem; font-size: 1.05rem; color: #cfefff; }
+
+    /* Report form */
+    .report-panel {
+      margin-top: 1.75rem;
+      background: linear-gradient(180deg, rgba(0,0,0,0.2), rgba(0,0,0,0.05));
+      border: 1px solid rgba(0,240,255,0.08);
+      padding: 1rem;
+      border-radius: 12px;
     }
 
-    li {
-      margin-bottom: 0.6rem;
-      font-size: 1.05rem;
-    }
+    .form-row { display: flex; gap: 1rem; margin-bottom: 0.9rem; }
+    .form-row .col { flex: 1; }
 
-    p {
-      font-size: 1.1rem;
-      margin: 1rem 0;
-      color: #aad6ff;
+    label { display:block; font-size:0.9rem; color:var(--neon-weak); margin-bottom:6px; font-weight:600; }
+    input[type="text"], input[type="email"], textarea, select {
+      width:100%;
+      background: rgba(0,0,0,0.35);
+      border: 1px solid rgba(0,240,255,0.08);
+      padding: 0.6rem 0.7rem;
+      color: var(--neon);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      outline: none;
+      transition: box-shadow .15s ease, border-color .15s ease;
     }
+    input:focus, textarea:focus {
+      box-shadow: 0 0 12px rgba(0,240,255,0.12);
+      border-color: rgba(0,240,255,0.25);
+    }
+    textarea { min-height:120px; resize:vertical; }
 
-    footer {
-      text-align: center;
-      margin: 3rem 0 1rem;
-      font-size: 0.9rem;
-      color: #0077aa;
+    .small { font-size:0.9rem; color:var(--muted); margin-top:6px; }
+
+    .actions {
+      margin-top: 0.8rem;
+      display:flex;
+      gap:.75rem;
+      align-items:center;
     }
 
     .btn {
       display: inline-block;
-      margin-top: 1rem;
-      padding: 0.8rem 1.5rem;
-      border: 2px solid #00eaff;
+      padding: 0.7rem 1rem;
+      border: 2px solid var(--neon);
       border-radius: 8px;
       background-color: transparent;
-      color: #00eaff;
+      color: var(--neon);
       font-family: 'Orbitron', sans-serif;
-      font-size: 1rem;
+      font-size: 0.95rem;
       text-decoration: none;
-      transition: all 0.3s ease;
+      cursor:pointer;
+      transition: all 0.2s ease;
+    }
+    .btn:hover {
+      background: rgba(0,240,255,0.06);
+      box-shadow: 0 0 12px #00eaff;
+      transform: translateY(-2px);
     }
 
-    .btn:hover {
-      background-color: #00eaff22;
-      box-shadow: 0 0 10px #00eaff;
-      transform: scale(1.05);
+    .muted-link { color: var(--muted); text-decoration: none; font-size:0.95rem; }
+
+    footer {
+      text-align: center;
+      margin: 3rem 0 1rem;
+      font-size: 0.95rem;
+      color: var(--neon-weak);
     }
+
+    footer a {
+      color: var(--neon);
+      text-decoration: none;
+      text-shadow: 0 0 8px #00eaff;
+    }
+
+    footer a:hover { text-shadow: 0 0 12px #00eaff, 0 0 20px #00eaff; }
 
     @media (max-width: 768px) {
-      header h1 {
-        font-size: 2rem;
-      }
-
-      .logo-left, .logo-right {
-        width: 60px;
-      }
+      header h1 { font-size: 2rem; }
+      .logo-left, .logo-right { width: 60px; }
+      .form-row { flex-direction: column; }
     }
   </style>
 </head>
@@ -140,15 +180,17 @@
 
   <div class="container">
     <h2>Last Night Automation</h2>
-<ul>
-  <li>Real-time system monitoring and reporting</li>
-  <li>Automated Windows Updates with progress feedback</li>
-  <li>Scheduled and selective folder backups</li>
-  <li>Malwarebytes and ESET scanning integrations</li>
-  <li>Internet connectivity checks with notifications</li>
-  <li>Voice greeting and audible status updates</li>
-  <li>Animated logo pulse indicating activity</li>
-</ul>
+    <p class="lead">Core tools & features currently bundled with this release.</p>
+
+    <ul>
+      <li>Real-time system monitoring and reporting</li>
+      <li>Automated Windows Updates with progress feedback</li>
+      <li>Scheduled and selective folder backups</li>
+      <li>Malwarebytes and ESET scanning integrations</li>
+      <li>Internet connectivity checks with notifications</li>
+      <li>Voice greeting and audible status updates</li>
+      <li>Animated logo pulse indicating activity</li>
+    </ul>
 
     <h2>Fixes & Improvements Planned</h2>
     <ul>
@@ -170,18 +212,71 @@
       <li><strong>Legacy import shim:</strong> A tiny <code>__builtin__.py</code> compatibility file is included for libraries expecting the Python-2 module name.</li>
       <li><strong>No console pop-ups:</strong> Subprocess launches (e.g., robocopy) are run with flags that keep Windows command windows hidden when running the GUI EXE.</li>
       <li><strong>Bundled assets:</strong> Logos and images are included in the EXE build so the animated/branding icons display correctly.</li>
-      <li><strong>Packaging notes:</strong> Built with PyInstaller; images are added as data so <code>resource_path()</code> finds them at runtime.</li>
     </ul>
+
+    <!-- Report a Bug section -->
+    <div class="report-panel" id="report">
+      <h2 style="margin-top:0;">Report a Bug</h2>
+      <p class="lead">Describe the issue and include steps to reproduce. Your message will open in the default mail client.</p>
+
+      <form action="mailto:lastnighttechnologies@gmail.com" method="post" enctype="text/plain">
+        <div class="form-row">
+          <div class="col">
+            <label for="name">Your name</label>
+            <input id="name" name="Name" type="text" placeholder="Full name (optional)">
+          </div>
+          <div class="col">
+            <label for="email">Your email</label>
+            <input id="email" name="Email" type="email" placeholder="you@example.com" required>
+          </div>
+        </div>
+
+        <div style="margin-bottom:.9rem;">
+          <label for="subject">Subject</label>
+          <input id="subject" name="Subject" type="text" placeholder="Short summary (e.g. 'Backup fails on drive D:')">
+        </div>
+
+        <div style="margin-bottom:.9rem;">
+          <label for="severity">Severity</label>
+          <select id="severity" name="Severity">
+            <option>Low - cosmetic / suggestion</option>
+            <option>Medium - intermittent</option>
+            <option>High - reproducible / breaks feature</option>
+            <option>Critical - data loss / security</option>
+          </select>
+        </div>
+
+        <div style="margin-bottom:.9rem;">
+          <label for="steps">Steps to reproduce</label>
+          <textarea id="steps" name="Steps" placeholder="1) …  2) …  3) …" required></textarea>
+        </div>
+
+        <div style="margin-bottom:.9rem;">
+          <label for="expected">Expected result</label>
+          <input id="expected" name="Expected" type="text" placeholder="What you expected to happen">
+        </div>
+
+        <div style="margin-bottom:.9rem;">
+          <label for="actual">Actual result</label>
+          <input id="actual" name="Actual" type="text" placeholder="What actually happened" required>
+        </div>
+
+        <div class="small">If you want to include screenshots or log files, attach them manually to the email that opens, or send them to <a class="muted-link" href="mailto:lastnighttechnologies@gmail.com">lastnighttechnologies@gmail.com</a>.</div>
+
+        <div class="actions">
+          <button type="submit" class="btn">Send Report</button>
+          <a class="muted-link" href="mailto:lastnighttechnologies@gmail.com">Or email us directly</a>
+        </div>
+      </form>
+    </div>
+    <!-- End Report panel -->
 
     <a class="btn" href="#">View GitHub Repo</a>
   </div>
 
-    <footer>
-    &copy; 2025 Last Night Technologies | Powered by Starlings Swarm Logic<br>
+  <footer>
+    &copy; 2025 Last Night Technologies | Starlings Swarm Logic<br>
     Support: <a href="mailto:lastnighttechnologies@gmail.com">lastnighttechnologies@gmail.com</a>
   </footer>
 </body>
 </html>
-
-
-
