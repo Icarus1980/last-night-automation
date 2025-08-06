@@ -97,6 +97,16 @@
       box-shadow: 0 0 20px #00e0ffaa;
     }
 
+    /* SHA text styling */
+    .sha-text {
+      font-family: monospace;
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-top: 0.4rem;
+      margin-bottom: 1.5rem;
+      user-select: all;
+    }
+
     /* Report form */
     .report-panel {
       margin-top: 1.75rem;
@@ -194,12 +204,11 @@
 
     <ul>
       <li>Automated Windows Updates with progress feedback</li>
-      <li>Selective folder backups</li>
+      <li>Scheduled and selective folder backups</li>
       <li>Malwarebytes and ESET scanning integrations</li>
       <li>Internet connectivity checks with notifications</li>
       <li>Voice greeting at startup</li>
       <li>Animated logo pulse indicating activity</li>
-      <li>Disk Usage and Benchmark tool</li>
     </ul>
 
     <img src="https://github.com/Icarus1980/last-night-automation/raw/main/Last%20Night%20GUI.png" alt="Last Night GUI" class="gui-image" />
@@ -221,6 +230,7 @@
        class="btn">
        ⬇ Download v1.0.07
     </a>
+    <div class="sha-text">sha256:287225fc461b8ef5b3f8df16b0f3930079fea83d69d339c37593e6549d8d72af</div>
 
     <h2>Fixes & Improvements Planned</h2>
     <ul>
@@ -237,72 +247,4 @@
     <ul>
       <li><strong>DNS Lookup fix:</strong> DNS prompt now runs on the main thread to avoid Tkinter dialog errors; results stream correctly into the Network Tools output box.</li>
       <li><strong>Netstat improvement:</strong> Netstat button uses numeric output with PID (e.g., <code>netstat -ano</code>) so connections can be traced to processes.</li>
-      <li><strong>Speedtest compatibility:</strong> Added a small shim so speedtest runs correctly in the packaged EXE (handles Python3 <code>__builtin__</code> expectation and missing stdout).</li>
-      <li><strong>Windowed EXE support:</strong> Early guard added to ensure <code>sys.stdout</code> / <code>sys.stderr</code> are valid in a windowed build (prevents <code>fileno()</code> errors).</li>
-      <li><strong>Legacy import shim:</strong> A tiny <code>__builtin__.py</code> compatibility file is included for libraries expecting the Python-2 module name.</li>
-      <li><strong>No console pop-ups:</strong> Subprocess launches (e.g., robocopy) are run with flags that keep Windows command windows hidden when running the GUI EXE.</li>
-      <li><strong>Bundled assets:</strong> Logos and images are included in the EXE build so the animated/branding icons display correctly.</li>
-    </ul>
-
-   <!-- Report a Bug section -->
-<div class="report-panel" id="report">
-  <h2 style="margin-top:0;">Report a Bug</h2>
-  <p class="lead">Describe the issue and include steps to reproduce. This form sends your report securely via Formspree.</p>
-
-  <form id="bugForm" action="https://formspree.io/f/mblkzazq" method="POST">
-    <label for="email">Your email:</label>
-    <input id="email" name="email" type="email" placeholder="you@example.com" required>
-
-    <label for="message">Your message:</label>
-    <textarea id="message" name="message" placeholder="Describe your issue here..." required></textarea>
-
-    <button type="submit" class="btn">Send</button>
-    <span id="formStatus" style="margin-left:10px;color:var(--neon-weak)"></span>
-  </form>
-</div>
-
-<script>
-document.getElementById('bugForm').addEventListener('submit', async function (e) {
-  e.preventDefault();
-  const status = document.getElementById('formStatus');
-  status.style.color = 'var(--neon-weak)';
-  status.textContent = 'Sending…';
-
-  const form = e.target;
-  const endpoint = form.action;
-  const formData = new FormData(form);
-
-  try {
-    const res = await fetch(endpoint, {
-      method: 'POST',
-      body: formData,
-      headers: { 'Accept': 'application/json' }
-    });
-
-    if (res.ok) {
-      status.style.color = '#7efb9a';
-      status.textContent = 'Thanks — report sent!';
-      form.reset();
-    } else {
-      const data = await res.json().catch(() => ({}));
-      status.style.color = '#ff9b9b';
-      status.textContent = data.error || 'There was an error submitting the form.';
-    }
-  } catch (err) {
-    status.style.color = '#ff9b9b';
-    status.textContent = 'Network error — please try again.';
-  }
-
-  setTimeout(() => { status.textContent = ''; }, 7000);
-});
-</script>
-
-<footer>
-  &copy; 2025 Last Night Technologies | Starlings Swarm Logic an original concept.
-All rights reserved.<br>
-  Support: <a href="mailto:lastnighttechnologies@gmail.com">lastnighttechnologies@gmail.com</a><br>
-  Created by Martin Thozamile van Heerden
-</footer>
-
-</body>
-</html>
+      <li><strong>Speedtest compatibility:</
