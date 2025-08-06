@@ -87,6 +87,95 @@
     ul { padding-left: 1.5rem; }
     li { margin-bottom: 0.6rem; font-size: 1.05rem; color: #cfefff; }
 
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Last Night Technologies</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Open+Sans&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg1: #010b10; 
+      --bg2: #020d14;
+      --panel: #031a23;
+      --neon: #00f0ff;
+      --neon-weak: #00ccff;
+      --muted: #aad6ff;
+    }
+
+    *{box-sizing: border-box}
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, var(--bg1) 0%, var(--bg2) 100%);
+      color: var(--neon);
+      font-family: 'Open Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: rgba(0, 0, 0, 0.7);
+      padding: 1rem;
+      text-align: center;
+      box-shadow: 0 0 20px #00e0ff88;
+      position: relative;
+    }
+
+    header h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 3rem;
+      color: var(--neon);
+      margin: 0;
+      letter-spacing: 4px;
+      text-shadow: 0 0 12px #00e0ff;
+    }
+
+    header p {
+      margin: 0.5rem 0 0 0;
+      color: var(--muted);
+    }
+
+    /* Logo positions */
+    .logo-left, .logo-right {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 80px;
+      height: auto;
+      border-radius: 10px;
+      box-shadow: 0 0 12px #00e0ff88;
+    }
+
+    .logo-left { left: 20px; }
+    .logo-right { right: 20px; }
+
+    .container {
+      max-width: 1000px;
+      margin: 2rem auto;
+      background: var(--panel);
+      padding: 2rem 2.5rem;
+      border-radius: 16px;
+      box-shadow: 0 0 15px #0099cc66;
+    }
+
+    h2 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.6rem;
+      color: var(--neon-weak);
+      border-bottom: 2px solid #0088cc;
+      padding-bottom: 0.5rem;
+      margin-top: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .lead { color: var(--muted); margin-bottom: 1rem; }
+
+    ul { padding-left: 1.5rem; }
+    li { margin-bottom: 0.6rem; font-size: 1.05rem; color: #cfefff; }
+
     /* GUI Image styling */
     .gui-image {
       display: block;
@@ -96,6 +185,159 @@
       border-radius: 12px;
       box-shadow: 0 0 20px #00e0ffaa;
     }
+
+    /* SHA text styling */
+    .sha-text {
+      font-family: monospace;
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-top: 0.4rem;
+      margin-bottom: 1.5rem;
+      user-select: all;
+    }
+
+    /* Report form */
+    .report-panel {
+      margin-top: 1.75rem;
+      background: linear-gradient(180deg, rgba(0,0,0,0.2), rgba(0,0,0,0.05));
+      border: 1px solid rgba(0,240,255,0.08);
+      padding: 1rem;
+      border-radius: 12px;
+    }
+
+    .form-row { display: flex; gap: 1rem; margin-bottom: 0.9rem; }
+    .form-row .col { flex: 1; }
+
+    label { display:block; font-size:0.9rem; color:var(--neon-weak); margin-bottom:6px; font-weight:600; }
+    input[type="text"], input[type="email"], textarea, select {
+      width:100%;
+      background: rgba(0,0,0,0.35);
+      border: 1px solid rgba(0,240,255,0.08);
+      padding: 0.6rem 0.7rem;
+      color: var(--neon);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      outline: none;
+      transition: box-shadow .15s ease, border-color .15s ease;
+    }
+    input:focus, textarea:focus {
+      box-shadow: 0 0 12px rgba(0,240,255,0.12);
+      border-color: rgba(0,240,255,0.25);
+    }
+    textarea { min-height:120px; resize:vertical; }
+
+    .small { font-size:0.9rem; color:var(--muted); margin-top:6px; }
+
+    .actions {
+      margin-top: 0.8rem;
+      display:flex;
+      gap:.75rem;
+      align-items:center;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 0.7rem 1rem;
+      border: 2px solid var(--neon);
+      border-radius: 8px;
+      background-color: transparent;
+      color: var(--neon);
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.95rem;
+      text-decoration: none;
+      cursor:pointer;
+      transition: all 0.2s ease;
+    }
+    .btn:hover {
+      background: rgba(0,240,255,0.06);
+      box-shadow: 0 0 12px #00eaff;
+      transform: translateY(-2px);
+    }
+
+    .muted-link { color: var(--muted); text-decoration: none; font-size:0.95rem; }
+
+    footer {
+      text-align: center;
+      margin: 3rem 0 1rem;
+      font-size: 0.95rem;
+      color: var(--neon-weak);
+    }
+
+    footer a {
+      color: var(--neon);
+      text-decoration: none;
+      text-shadow: 0 0 8px #00eaff;
+    }
+
+    footer a:hover { text-shadow: 0 0 12px #00eaff, 0 0 20px #00eaff; }
+
+    @media (max-width: 768px) {
+      header h1 { font-size: 2rem; }
+      .logo-left, .logo-right { width: 60px; }
+      .form-row { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <img class="logo-left" src="https://raw.githubusercontent.com/Icarus1980/last-night-automation/main/logo2.png" alt="Logo2">
+    <h1>LAST NIGHT TECHNOLOGIES</h1>
+    <img class="logo-right" src="https://raw.githubusercontent.com/Icarus1980/last-night-automation/main/face.png" alt="Face">
+    <p><em>Initiating precision. Standby for command...</em></p>
+  </header>
+
+  <div class="container">
+    <h2>Last Night Automation</h2>
+    <p class="lead">Core tools & features currently bundled with this release.</p>
+
+    <ul>
+      <li>Automated Windows Updates with progress feedback</li>
+      <li>Scheduled and selective folder backups</li>
+      <li>Malwarebytes and ESET scanning integrations</li>
+      <li>Internet connectivity checks with notifications</li>
+      <li>Voice greeting at startup</li>
+      <li>Animated logo pulse indicating activity</li>
+    </ul>
+
+    <img src="https://github.com/Icarus1980/last-night-automation/raw/main/Last%20Night%20GUI.png" alt="Last Night GUI" class="gui-image" />
+
+    <h2>Third-Party Security Tools</h2>
+    <p class="lead">
+      Our automation package includes seamless integration with popular antivirus tools like <strong>ESET</strong> and <strong>Malwarebytes</strong>.  
+      Please note that the program <em>automatically downloads and silently installs</em> these tools if they are not already present on your system.  
+      However, scanning and malware removal using these tools must be run manually by the user after installation.  
+    </p>
+    <p>
+      This approach ensures you always have the latest versions installed without interrupting your workflow.  
+      For best protection, please open and run scans in ESET and Malwarebytes after installation completes.
+    </p>
+
+    <h2>Download</h2>
+    <p class="lead">Get the latest version of Last Night Automation.</p>
+    <a href="https://github.com/Icarus1980/last-night-automation/releases/download/V1.0.07/Last.Night.Automation.Gen7.exe" 
+       class="btn">
+       ⬇ Download v1.0.07
+    </a>
+    <div class="sha-text">sha256:287225fc461b8ef5b3f8df16b0f3930079fea83d69d339c37593e6549d8d72af</div>
+
+    <h2>Fixes & Improvements Planned</h2>
+    <ul>
+      <li>Enhanced Windows Update automation for better reliability</li>
+      <li>Improved error handling and logging mechanisms</li>
+      <li>Integration of additional antivirus tools</li>
+      <li>Expand folder selection options for backup</li>
+      <li>More customizable voice alerts and status messages</li>
+      <li>UI responsiveness enhancements for various screen sizes</li>
+      <li>Support for multiple languages and accessibility features</li>
+    </ul>
+
+    <h2>Release Notes — Current Program</h2>
+    <ul>
+      <li><strong>DNS Lookup fix:</strong> DNS prompt now runs on the main thread to avoid Tkinter dialog errors; results stream correctly into the Network Tools output box.</li>
+      <li><strong>Netstat improvement:</strong> Netstat button uses numeric output with PID (e.g., <code>netstat -ano</code>) so connections can be traced to processes.</li>
+      <li><strong>Speedtest compatibility:</
+
 
     /* SHA text styling */
     .sha-text {
