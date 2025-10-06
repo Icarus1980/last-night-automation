@@ -167,9 +167,85 @@
 
     .muted-link { color: var(--muted); text-decoration: none; font-size:0.95rem; }
 
+    /* --- REFINED PURE CSS SPINNING EFFECT WITH "WEIRD LETTERS" --- */
+    .footer-effect {
+      margin-top: 3rem; 
+      width: 100%;
+      height: 200px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0px -5px 20px rgba(0, 240, 255, 0.5);
+      /* Use a single gradient circle as the background center */
+      background: radial-gradient(circle, rgba(0, 240, 255, 0.1) 0%, transparent 60%);
+    }
+
+    /* Outermost Ring (::before) - Slower spin */
+    .footer-effect::before {
+      content: '';
+      position: absolute;
+      width: 150px;
+      height: 150px;
+      border: 4px solid rgba(0, 240, 255, 0.2); 
+      border-top-color: var(--neon); 
+      border-radius: 50%;
+      animation: spin-slow 10s linear infinite;
+    }
+
+    /* AI Letters / Data Ring (child div) - Fastest spin, opposite direction */
+    .ai-letters {
+      position: absolute;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      /* Use a complex string of unicode/special characters for a "weird letter" look */
+      content: "※ ⌘ § ▚ ☍ ⚡ ⁜ ⛣ ◈ ✪ ⚙ ◰ ◳ ⚿ ☌ ⍟";
+      font-family: 'Orbitron', sans-serif;
+      font-size: 10px; /* Small text size */
+      color: var(--neon-weak);
+      opacity: 0.8;
+      /* Rotate the container */
+      animation: spin-fast 6s linear infinite reverse; 
+      /* Position the "text" at the edge of the circular path */
+      line-height: 120px; /* Vertically center content */
+      text-align: center;
+      padding-top: 5px; 
+    }
+
+    /* Inner Ring (::after) - Medium spin */
+    .footer-effect::after {
+      content: '';
+      position: absolute;
+      width: 80px;
+      height: 80px;
+      border: 2px solid transparent;
+      border-bottom-color: var(--neon-weak);
+      border-radius: 50%;
+      animation: spin-medium 8s linear infinite;
+      box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+    }
+
+    @keyframes spin-slow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes spin-medium {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    
+    @keyframes spin-fast {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(-360deg); } /* Spinning backwards */
+    }
+    /* --- END REFINED PURE CSS SPINNING EFFECT --- */
+
     footer {
       text-align: center;
-      margin: 3rem 0 1rem;
+      margin: 1rem 0 1rem; 
       font-size: 0.95rem;
       color: var(--neon-weak);
     }
@@ -256,8 +332,7 @@
       <li><strong>Bundled assets:</strong> Logos and images are included in the EXE build so the animated/branding icons display correctly.</li>
     </ul>
 
-   <!-- Report a Bug section -->
-<div class="report-panel" id="report">
+   <div class="report-panel" id="report">
   <h2 style="margin-top:0;">Report a Bug</h2>
   <p class="lead">Describe the issue and include steps to reproduce. This form sends your report securely via Formspree.</p>
 
@@ -308,6 +383,10 @@ document.getElementById('bugForm').addEventListener('submit', async function (e)
   setTimeout(() => { status.textContent = ''; }, 7000);
 });
 </script>
+</div>
+<div class="footer-effect">
+  <div class="ai-letters"></div> 
+</div>
 
 <footer>
   &copy; 2025 Last Night Technologies | Starlings Swarm Logic an original concept.
